@@ -28,7 +28,7 @@ typedef struct PACKED
    uint8           Command;
    uint16          Index;
    uint8           SubIndex;
-   union
+   union PACKED
    {
       uint8   bdata[0x200]; /* variants for easy data access */
       uint16  wdata[0x100];
@@ -46,7 +46,7 @@ typedef struct PACKED
    uint8           Opcode;
    uint8           Reserved;
    uint16          Fragments;
-   union
+   union PACKED
    {
       uint8   bdata[0x200]; /* variants for easy data access */
       uint16  wdata[0x100];
@@ -181,7 +181,7 @@ int ecx_SDOread(ecx_contextt *context, uint16 slave, uint16 index, uint8 subinde
                if (*psize >= bytesize) /* parameter buffer big enough ? */
                {
                   /* copy parameter in parameter buffer */
-                  memcpy(p, &aSDOp->ldata[0], bytesize);
+                  memcpy(p, (void*)&aSDOp->ldata[0], bytesize);
                   /* return the real parameter size */
                   *psize = bytesize;
                }
@@ -204,7 +204,7 @@ int ecx_SDOread(ecx_contextt *context, uint16 slave, uint16 index, uint8 subinde
                   if (Framedatasize < SDOlen) /* transfer in segments? */
                   {
                      /* copy parameter data in parameter buffer */
-                     memcpy(hp, &aSDOp->ldata[1], Framedatasize);
+                     memcpy(hp, (void*)&aSDOp->ldata[1], Framedatasize);
                      /* increment buffer pointer */
                      hp += Framedatasize;
                      *psize = Framedatasize;
@@ -249,12 +249,12 @@ int ecx_SDOread(ecx_contextt *context, uint16 slave, uint16 index, uint8 subinde
                                        /* substract unused bytes from frame */
                                        Framedatasize = Framedatasize - ((aSDOp->Command & 0x0e) >> 1);
                                     /* copy to parameter buffer */
-                                    memcpy(hp, &(aSDOp->Index), Framedatasize);
+                                    memcpy(hp, (void*)&(aSDOp->Index), Framedatasize);
                                  }
                                  else /* segments follow */
                                  {
                                     /* copy to parameter buffer */
-                                    memcpy(hp, &(aSDOp->Index), Framedatasize);
+                                    memcpy(hp, (void*)&(aSDOp->Index), Framedatasize);
                                     /* increment buffer pointer */
                                     hp += Framedatasize;
                                  }
@@ -280,7 +280,7 @@ int ecx_SDOread(ecx_contextt *context, uint16 slave, uint16 index, uint8 subinde
                   else
                   {
                      /* copy to parameter buffer */
-                     memcpy(bp, &aSDOp->ldata[1], SDOlen);
+                     memcpy(bp, (void*)&aSDOp->ldata[1], SDOlen);
                      *psize = SDOlen;
                   }
                }
@@ -361,7 +361,7 @@ int ecx_SDOwrite(ecx_contextt *context, uint16 Slave, uint16 Index, uint8 SubInd
       SDOp->SubIndex = SubIndex;
       hp = p;
       /* copy parameter data to mailbox */
-      memcpy(&SDOp->ldata[0], hp, psize);
+      memcpy((void*)&SDOp->ldata[0], (void*)hp, psize);
       /* send mailbox SDO download request to slave */
       wkc = ecx_mbxsend(context, Slave, (ec_mbxbuft *)&MbxOut, EC_TIMEOUTTXM);
       if (wkc > 0)
@@ -429,7 +429,7 @@ int ecx_SDOwrite(ecx_contextt *context, uint16 Slave, uint16 Index, uint8 SubInd
       SDOp->ldata[0] = htoel(psize);
       hp = p;
       /* copy parameter data to mailbox */
-      memcpy(&SDOp->ldata[1], hp, framedatasize);
+      memcpy((void*)&SDOp->ldata[1], (void*)hp, framedatasize);
       hp += framedatasize;
       psize -= framedatasize;
       /* send mailbox SDO download request to slave */
@@ -481,7 +481,7 @@ int ecx_SDOwrite(ecx_contextt *context, uint16 Slave, uint16 Index, uint8 SubInd
                   SDOp->CANOpen = htoes(0x000 + (ECT_COES_SDOREQ << 12)); /* number 9bits service upper 4 bits (SDO request) */
                   SDOp->Command = SDOp->Command + toggle; /* add toggle bit to command byte */
                   /* copy parameter data to mailbox */
-                  memcpy(&SDOp->Index, hp, framedatasize);
+                  memcpy((void*)&SDOp->Index, (void*)hp, framedatasize);
                   /* update parameter buffer pointer */
                   hp += framedatasize;
                   psize -= framedatasize;

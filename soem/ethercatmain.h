@@ -22,11 +22,13 @@ extern "C"
 /** max. length of readable name in slavelist and Object Description List */
 #define EC_MAXNAME        40
 /** max. number of slaves in array */
-#define EC_MAXSLAVE       200
+//Wayne #define EC_MAXSLAVE       200
+#define EC_MAXSLAVE       4
 /** max. number of groups */
 #define EC_MAXGROUP       2
 /** max. number of IO segments per group */
-#define EC_MAXIOSEGMENTS  64
+//Wayne #define EC_MAXIOSEGMENTS  64
+#define EC_MAXIOSEGMENTS  16
 /** max. mailbox size */
 #define EC_MAXMBX         1486
 /** max. eeprom PDO entries */
@@ -377,6 +379,8 @@ typedef struct PACKED ec_PDOdesc
 PACKED_END
 
 /** Context structure , referenced by all ecx functions*/
+typedef  int (*FOEfunc)(uint16 slave, int packetnumber, int datasize);
+
 typedef struct ecx_context
 {
    /** port reference, may include red_port */
@@ -420,7 +424,8 @@ typedef struct ecx_context
    /** internal, FMMU list from eeprom */
    ec_eepromFMMUt *eepFMMU;
    /** registered FoE hook */
-   int            (*FOEhook)(uint16 slave, int packetnumber, int datasize);
+   //int            (*FOEhook)(uint16 slave, int packetnumber, int datasize);
+	 FOEfunc					FOEhook;
 } ecx_contextt;
 
 #ifdef EC_VER1

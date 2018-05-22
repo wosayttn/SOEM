@@ -29,7 +29,7 @@ typedef struct PACKED
    uint8         error          :1;
    uint8         driveNo        :3;
    uint8         elementflags;
-   union
+   union PACKED
    {
       uint16     idn;
       uint16     fragmentsleft;

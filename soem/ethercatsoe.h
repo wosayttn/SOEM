@@ -51,7 +51,7 @@ typedef struct PACKED
    uint16     currentlength;
    /** maximum length in bytes of list */
    uint16     maxlength;
-   union
+   union PACKED
    {
       uint8   byte[8];
       uint16  word[4];

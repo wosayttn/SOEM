@@ -30,13 +30,13 @@ typedef struct PACKED
    ec_mbxheadert MbxHeader;
    uint8         OpCode;
    uint8         Reserved;
-   union
+   union PACKED
    {
       uint32        Password;
       uint32        PacketNumber;
       uint32        ErrorCode;
    };
-   union
+   union PACKED
    {
       char          FileName[EC_MAXFOEDATA];
       uint8         Data[EC_MAXFOEDATA];
@@ -53,7 +53,7 @@ PACKED_END
  */
 int ecx_FOEdefinehook(ecx_contextt *context, void *hook)
 {
-  context->FOEhook = hook;
+  context->FOEhook = (FOEfunc)hook;
   return 1;
 }
 

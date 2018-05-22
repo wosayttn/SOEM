@@ -50,7 +50,8 @@ extern "C"
 /** datagram type EtherCAT */
 #define EC_ECATTYPE        0x1000
 /** number of frame buffers per channel (tx, rx1 rx2) */
-#define EC_MAXBUF          16
+//#define EC_MAXBUF          16
+#define EC_MAXBUF          8
 /** timeout value in us for tx frame to return to rx */
 #define EC_TIMEOUTRET      2000
 /** timeout value in us for safe data transfer, max. triple retry */
@@ -462,6 +463,7 @@ typedef enum
    EC_ERR_TYPE_FOE_FILE_NOTFOUND = 10
 } ec_err_type;
 
+#pragma anon_unions
 /** Struct to retrieve errors. */
 typedef struct
 {
